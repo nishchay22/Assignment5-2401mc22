@@ -1,0 +1,47 @@
+$ peterson
+=== Question 1: Mutual Exclusion using Peterson's Algorithm ===
+Process 0 in CS, counter = 1 (iteration 1/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 2 (iteration 1/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 3 (iteration 2/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 4 (iteration 2/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 5 (iteration 3/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 6 (iteration 3/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 7 (iteration 4/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 8 (iteration 4/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 9 (iteration 5/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 10 (iteration 5/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 11 (iteration 6/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 12 (iteration 6/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 13 (iteration 7/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 14 (iteration 7/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 15 (iteration 8/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 16 (iteration 8/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 17 (iteration 9/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 18 (iteration 9/10)
+Process 1 exiting CS
+Process 0 in CS, counter = 19 (iteration 10/10)
+Process 0 exiting CS
+Process 1 in CS, counter = 20 (iteration 10/10)
+Process 1 exiting CS
+
+--- Verification ---
+Expected final shared_counter = 20
+Actual final shared_counter   = 20
+RESULT: SUCCESS (Mutual exclusion verified, zero lost updates!)

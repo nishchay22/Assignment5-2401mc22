@@ -120,6 +120,9 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+int             sem_init(int, int);
+int             sem_wait(int);
+int             sem_post(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
@@ -185,6 +188,7 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+int             shm_get(void);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

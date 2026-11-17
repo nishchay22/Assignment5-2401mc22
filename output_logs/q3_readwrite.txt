@@ -1,0 +1,32 @@
+$ readwrite
+=== Question 3: Readers-Writers Problem (3 Readers, 2 Writers) ===
+[Tick 1363] Reader 1 (PID 9) ENTERED read CS -> shared_data = 100 (active_readers = 1)
+[Tick 1367] Reader 2 (PID 10) ENTERED read CS -> shared_data = 100 (active_readers = 2)
+[Tick 1370] Reader 3 (PID 11) ENTERED read CS -> shared_data = 100 (active_readers = 3)
+[Tick 1373] Reader 1 (PID 9) LEAVING read CS (remaining active_readers = 2)
+[Tick 1376] Reader 2 (PID 10) LEAVING read CS (remaining active_readers = 1)
+[Tick 1378] Reader 3 (PID 11) LEAVING read CS (remaining active_readers = 0)
+[Tick 1380] *** Writer 1 (PID 12) EXCLUSIVE WRITE -> incremented shared_data = 110 (active_readers = 0) ***
+[Tick 1386] *** Writer 1 (PID 12) LEAVING write CS ***
+[Tick 1387] *** Writer 2 (PID 13) EXCLUSIVE WRITE -> incremented shared_data = 120 (active_readers = 0) ***
+[Tick 1393] *** Writer 2 (PID 13) LEAVING write CS ***
+[Tick 1394] Reader 1 (PID 9) ENTERED read CS -> shared_data = 120 (active_readers = 1)
+[Tick 1397] Reader 2 (PID 10) ENTERED read CS -> shared_data = 120 (active_readers = 2)
+[Tick 1400] Reader 3 (PID 11) ENTERED read CS -> shared_data = 120 (active_readers = 3)
+[Tick 1403] Reader 1 (PID 9) LEAVING read CS (remaining active_readers = 2)
+[Tick 1406] Reader 2 (PID 10) LEAVING read CS (remaining active_readers = 1)
+[Tick 1409] Reader 3 (PID 11) LEAVING read CS (remaining active_readers = 0)
+[Tick 1411] *** Writer 1 (PID 12) EXCLUSIVE WRITE -> incremented shared_data = 130 (active_readers = 0) ***
+[Tick 1417] *** Writer 1 (PID 12) LEAVING write CS ***
+[Tick 1418] *** Writer 2 (PID 13) EXCLUSIVE WRITE -> incremented shared_data = 140 (active_readers = 0) ***
+[Tick 1425] *** Writer 2 (PID 13) LEAVING write CS ***
+[Tick 1426] Reader 1 (PID 9) ENTERED read CS -> shared_data = 140 (active_readers = 1)
+[Tick 1430] Reader 2 (PID 10) ENTERED read CS -> shared_data = 140 (active_readers = 2)
+[Tick 1433] Reader 3 (PID 11) ENTERED read CS -> shared_data = 140 (active_readers = 3)
+[Tick 1436] Reader 1 (PID 9) LEAVING read CS (remaining active_readers = 2)
+[Tick 1439] Reader 2 (PID 10) LEAVING read CS (remaining active_readers = 1)
+[Tick 1441] Reader 3 (PID 11) LEAVING read CS (remaining active_readers = 0)
+
+--- Verification ---
+Final shared_data = 140 (Expected: 140 after 4 writer increments of +10)
+=== Readers-Writers Test Complete ===

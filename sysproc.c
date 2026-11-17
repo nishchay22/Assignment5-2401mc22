@@ -89,3 +89,43 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// Allocate/map a shared 4KB memory page into the calling process's address space
+int
+sys_shm_get(void)
+{
+  return shm_get();
+}
+
+// Initialize kernel semaphore sem_id to value
+int
+sys_sem_init(void)
+{
+  int sem_id, value;
+
+  if(argint(0, &sem_id) < 0 || argint(1, &value) < 0)
+    return -1;
+  return sem_init(sem_id, value);
+}
+
+// Wait (decrement / block) on kernel semaphore sem_id
+int
+sys_sem_wait(void)
+{
+  int sem_id;
+
+  if(argint(0, &sem_id) < 0)
+    return -1;
+  return sem_wait(sem_id);
+}
+
+// Post (increment / wake) on kernel semaphore sem_id
+int
+sys_sem_post(void)
+{
+  int sem_id;
+
+  if(argint(0, &sem_id) < 0)
+    return -1;
+  return sem_post(sem_id);
+}

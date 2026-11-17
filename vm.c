@@ -270,8 +270,10 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
       pa = PTE_ADDR(*pte);
       if(pa == 0)
         panic("kfree");
-      char *v = P2V(pa);
-      kfree(v);
+      if((*pte & PTE_SHM) == 0){
+        char *v = P2V(pa);
+        kfree(v);
+      }
       *pte = 0;
     }
   }
@@ -329,12 +331,18 @@ copyuvm(pde_t *pgdir, uint sz)
       panic("copyuvm: page not present");
     pa = PTE_ADDR(*pte);
     flags = PTE_FLAGS(*pte);
-    if((mem = kalloc()) == 0)
-      goto bad;
-    memmove(mem, (char*)P2V(pa), PGSIZE);
-    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0) {
-      kfree(mem);
-      goto bad;
+    if(flags & PTE_SHM){
+      // Shared memory page: map the exact same physical page into child's pgdir
+      if(mappages(d, (void*)i, PGSIZE, pa, flags) < 0)
+        goto bad;
+    } else {
+      if((mem = kalloc()) == 0)
+        goto bad;
+      memmove(mem, (char*)P2V(pa), PGSIZE);
+      if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0) {
+        kfree(mem);
+        goto bad;
+      }
     }
   }
   return d;
@@ -383,6 +391,33 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
     va = va0 + PGSIZE;
   }
   return 0;
+}
+
+static char *shared_phys_page = 0;
+
+// Allocate (once), zero-initialize, and map a 4KB shared memory page into
+// the calling process's address space. Children created via fork() share
+// the exact same physical page via the PTE_SHM flag in copyuvm().
+int
+shm_get(void)
+{
+  struct proc *curproc = myproc();
+  uint va;
+
+  if(shared_phys_page == 0){
+    shared_phys_page = kalloc();
+    if(shared_phys_page == 0)
+      return -1;
+  }
+  memset(shared_phys_page, 0, PGSIZE);
+
+  va = PGROUNDUP(curproc->sz);
+  if(mappages(curproc->pgdir, (char*)va, PGSIZE, V2P(shared_phys_page), PTE_W|PTE_U|PTE_SHM) < 0)
+    return -1;
+
+  curproc->sz = va + PGSIZE;
+  switchuvm(curproc);
+  return (int)va;
 }
 
 //PAGEBREAK!

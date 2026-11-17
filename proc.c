@@ -12,6 +12,15 @@ struct {
   struct proc proc[NPROC];
 } ptable;
 
+#define NSEM 32
+
+struct ksem {
+  struct spinlock lock;
+  int value;
+};
+
+struct ksem semtable[NSEM];
+
 static struct proc *initproc;
 
 int nextpid = 1;
@@ -23,7 +32,10 @@ static void wakeup1(void *chan);
 void
 pinit(void)
 {
+  int i;
   initlock(&ptable.lock, "ptable");
+  for(i = 0; i < NSEM; i++)
+    initlock(&semtable[i].lock, "sem");
 }
 
 // Must be called with interrupts disabled
@@ -531,4 +543,47 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+// Initialize kernel counting/binary semaphore sem_id to value
+int
+sem_init(int sem_id, int value)
+{
+  if(sem_id < 0 || sem_id >= NSEM || value < 0)
+    return -1;
+
+  acquire(&semtable[sem_id].lock);
+  semtable[sem_id].value = value;
+  release(&semtable[sem_id].lock);
+  return 0;
+}
+
+// Wait (P / down) operation on semaphore sem_id using xv6 sleep()
+int
+sem_wait(int sem_id)
+{
+  if(sem_id < 0 || sem_id >= NSEM)
+    return -1;
+
+  acquire(&semtable[sem_id].lock);
+  while(semtable[sem_id].value <= 0){
+    sleep(&semtable[sem_id], &semtable[sem_id].lock);
+  }
+  semtable[sem_id].value--;
+  release(&semtable[sem_id].lock);
+  return 0;
+}
+
+// Signal (V / up / post) operation on semaphore sem_id using xv6 wakeup()
+int
+sem_post(int sem_id)
+{
+  if(sem_id < 0 || sem_id >= NSEM)
+    return -1;
+
+  acquire(&semtable[sem_id].lock);
+  semtable[sem_id].value++;
+  wakeup(&semtable[sem_id]);
+  release(&semtable[sem_id].lock);
+  return 0;
 }
